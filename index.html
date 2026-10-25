@@ -1,0 +1,302 @@
+
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="مختبر تفاعلي لتعلّم JavaScript">
+  <title>مختبر JavaScript</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+
+  <style>
+    /* تحسين القائمة الجانبية */
+    .layout {
+      display: flex;
+      align-items: flex-start;
+    }
+
+    .side {
+      flex-shrink: 0;
+      transition: width .25s ease, min-width .25s ease,
+                  padding .25s ease, opacity .25s ease;
+    }
+
+    .side .filters {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .side .filters button {
+      width: 100%;
+      text-align: right;
+      cursor: pointer;
+    }
+
+    .side .filters button.active {
+      background: #3746a8;
+      color: #fff;
+    }
+
+    .side #list a {
+      display: block;
+      padding: 10px 12px;
+      margin: 4px 0;
+      border-radius: 8px;
+      text-decoration: none;
+    }
+
+    .side #list a.active {
+      background: #3746a8;
+      color: white;
+    }
+
+    .sidebar-toggle {
+      border: 0;
+      border-radius: 8px;
+      padding: 9px 12px;
+      margin-left: 8px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .layout.sidebar-hidden .side {
+      width: 0 !important;
+      min-width: 0 !important;
+      padding: 0 !important;
+      overflow: hidden;
+      border: 0;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .layout main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    @media (max-width: 768px) {
+      .layout {
+        position: relative;
+      }
+
+      .layout .side {
+        width: 260px;
+        min-width: 260px;
+        max-width: 85vw;
+      }
+
+      .layout.sidebar-hidden .side {
+        width: 0 !important;
+        min-width: 0 !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- <header class="top">
+  <a class="brand" href="#">
+    <b>JS</b>
+    <span>
+      <strong>مختبر JavaScript</strong>
+      <small>Interactive Examples Explorer</small>
+    </span>
+  </a>
+
+  <div>
+    <button id="sidebarToggle" class="sidebar-toggle"
+            type="button" aria-label="إظهار أو إخفاء القائمة"
+            aria-expanded="true">☰</button>
+    <span class="pill">● بيئة تعليمية</span>
+    <button id="theme" type="button">◐</button>
+  </div>
+</header> -->
+
+
+
+<header class="top">
+
+  <button id="sidebarToggle"
+          class="sidebar-toggle"
+          type="button"
+          aria-label="فتح القائمة"
+          aria-expanded="false">
+    ☰
+  </button>
+
+  <a class="brand" href="#">
+    <b>JS</b>
+    <span>
+      <strong>مختبر JavaScript</strong>
+      <small>أمثلة تفاعلية للتعلّم والتجربة</small>
+    </span>
+  </a>
+
+  <button id="theme" type="button">◐</button>
+
+</header>
+
+<div class="layout" id="mainLayout">
+    <!-- <div class="layout sidebar-hidden" id="mainLayout"></div> -->
+
+  <aside class="side" id="sidebar">
+    <h2>مكتبة الأمثلة <span id="count">0</span></h2>
+
+    <input id="search" type="search"
+           placeholder="ابحث عن مثال..."
+           aria-label="البحث عن درس">
+
+    <div class="filters">
+      <button data-page="all" class="active">الكل</button>
+      <button data-page="1">1 · البداية</button>
+      <button data-page="2">2 · المتغيرات</button>
+      <button data-page="3">3 · أنواع البيانات</button>
+      <button data-page="4">4 · العوامل</button>
+      <button data-page="5">5 · العمليات الحسابية</button>
+      <button data-page="6">6 · المقارنة</button>
+      <button data-page="7">7 · العمليات المنطقية</button>
+      <button data-page="8">8 · العمليات البتّية</button>
+      <button data-page="9">9 · الإسناد</button>
+      <button data-page="10">10 · معرفة النوع</button>
+    </div>
+
+    <nav id="list" aria-label="قائمة دروس JavaScript"></nav>
+
+    <p class="sidefoot">تعلّم بالتجربة، لا بالحفظ فقط.</p>
+  </aside>
+
+  <main>
+
+    <section class="hero">
+      <div>
+        <label>LEARN BY DOING</label>
+        <h1>حوّل الكود إلى تجربة حيّة<span>.</span></h1>
+        <p>غيّر المدخلات، شغّل المثال، وشاهد النتيجة مباشرة.</p>
+      </div>
+      <div class="art">{ JS }</div>
+    </section>
+
+    <div class="crumb">
+      المكتبة　/　
+      <span id="pageName">البدء مع JavaScript</span>　/　
+      <b id="crumb">document.write()</b>
+    </div>
+
+    <section class="heading">
+      <div class="badge" id="badge">JS</div>
+      <div>
+        <small id="category">أساسيات · مثال 1</small>
+        <h2 id="title">عرض نص باستخدام document.write()</h2>
+      </div>
+      <p id="desc"></p>
+    </section>
+
+    <div class="workgrid">
+
+      <section class="panel">
+        <div class="panelhead">
+          <div>
+            <h3>⌘　جرّب المثال</h3>
+            <small>عدّل القيم ثم شغّل الكود</small>
+          </div>
+          <span class="tag">● JavaScript</span>
+        </div>
+
+        <div id="inputs" class="inputs"></div>
+
+        <div class="actions">
+          <button class="run" id="run">▶ تشغيل المثال</button>
+          <button class="reset" id="reset">↺ إعادة ضبط</button>
+        </div>
+
+        <div class="codehead">
+          الكود المستخدم
+          <button id="copy">نسخ الكود</button>
+        </div>
+
+        <pre><code id="code"></code></pre>
+      </section>
+
+      <section class="panel">
+        <div class="panelhead">
+          <div>
+            <h3>↗　المخرجات</h3>
+            <small>النتيجة تظهر هنا</small>
+          </div>
+          <span id="status">جاهز للتشغيل</span>
+        </div>
+
+        <div class="toolbar">
+          ● ● ●　 معاينة المتصفح
+          <button id="clear">مسح</button>
+        </div>
+
+        <div class="frame">
+          <iframe id="preview"
+                  title="معاينة المخرجات"
+                  sandbox=""></iframe>
+        </div>
+
+        <div class="consolehead">
+          ▸　 سجل التشغيل
+          <span>Console</span>
+        </div>
+
+        <pre id="console">اضغط تشغيل المثال لعرض النتيجة.</pre>
+      </section>
+
+    </div>
+
+    <section class="panel explanation">
+      <div class="star">✦</div>
+      <div>
+        <label>افهم الفكرة</label>
+        <h3>كيف يعمل هذا المثال؟</h3>
+        <p id="explain"></p>
+        <div class="tip">💡 <span id="tip"></span></div>
+      </div>
+    </section>
+
+    <footer>
+      <b>مختبر JavaScript</b>
+      <span>مشروع تعليمي للتجربة والتعلّم</span>
+      <div>
+        <a target="_blank" rel="noopener"
+           href="https://harmash.com/tutorials/javascript/getting-started">درس البداية ↗</a>
+        <a target="_blank" rel="noopener"
+           href="https://harmash.com/tutorials/javascript/variables">المتغيرات ↗</a>
+        <a target="_blank" rel="noopener"
+           href="https://harmash.com/tutorials/javascript/data-types">أنواع البيانات ↗</a>
+        <a target="_blank" rel="noopener"
+           href="https://harmash.com/tutorials/javascript/operators">العوامل ↗</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script src="assets/js/examples.js"></script>
+<script src="assets/js/operators.js"></script>
+<script src="assets/js/app.js"></script>
+
+<script>
+  // إظهار القائمة الجانبية وإخفاؤها
+  (() => {
+    const toggle = document.getElementById('sidebarToggle');
+    const layout = document.getElementById('mainLayout');
+
+    toggle.addEventListener('click', () => {
+      const hidden = layout.classList.toggle('sidebar-hidden');
+      toggle.setAttribute('aria-expanded', String(!hidden));
+      toggle.setAttribute(
+        'aria-label',
+        hidden ? 'إظهار القائمة' : 'إخفاء القائمة'
+      );
+    });
+  })();
+</script>
+
+</body>
+</html>
